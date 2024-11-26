@@ -1,0 +1,1935 @@
+
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+# (1) "Histories1": We generated daily infections named "hist5".
+
+```{r}
+
+library(dplyr)
+library(tidyr)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO data and info/Data--/histories1.CSV")
+
+# Filter only 'infection' entries and assign 1 to them
+data <- data %>%
+  filter(type == "infection") %>%
+  mutate(type = 1)
+
+# Convert 'time' to POSIXct format and create new columns for date
+data <- data %>%
+  mutate(time = as.POSIXct(time, origin = "1970-01-01"),
+         date = as.Date(time))
+
+# Group by 'date' and sum the 'type' column to count total infections per day
+result <- data %>%
+  group_by(date) %>%
+  summarise(total_infection = sum(type))
+
+print(result)
+
+# Save the result as a CSV file
+write.csv(result, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO data and info/Data--/hist5.csv", row.names = FALSE)
+
+
+```
+
+
+
+
+
+# (2) Time series plot of the generated data (a) 
+
+```{r}
+###############################
+#### This one prints total_infection and cumulative_cases separately
+###############################
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Generate cumulative cases column
+data <- data %>%
+  mutate(cumulative_case = cumsum(total_infection))
+
+# Save the updated data as CSV
+write.csv(data, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv", row.names = FALSE)
+
+# Plot time series for total infection and cumulative case
+plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
+  geom_line(color="black", size=1.0) +
+  labs(x="Date and Time", y="Infection", title="Time Series of Total Infections") +
+  theme_minimal()
+
+plot_cumulative <- ggplot(data, aes(x=datetime, y=cumulative_case)) +
+  geom_line(color="brown", size=1.0) +
+  labs(x="Date and Time", y="Cumulative Case", title="Time Series of Cumulative Case") +
+  theme_minimal()
+
+# Print and save each plot
+print(plot_total)
+print(plot_cumulative)
+
+# Save the plots in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/total_infection_plot.png", plot = plot_total, width = 8, height = 6)
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/cumulative_case_plot.png", plot = plot_cumulative, width = 8, height = 6)
+
+######################################
+
+```
+
+
+
+
+# (3) Time series plot of the generated data (a) 
+
+```{r}
+
+###############################
+#### This one prints total_infection and cumulative_cases separately
+###############################
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Generate cumulative cases column
+data <- data %>%
+  mutate(cumulative_case = cumsum(total_infection))
+
+# Save the updated data as CSV
+write.csv(data, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv", row.names = FALSE)
+
+# Plot time series for total infection and cumulative case
+plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
+  geom_line(color="#1b9e77", size=1.2) +
+  geom_point(color="#d95f02", size=2) +
+  labs(x="Date and Time", y="# of cases (hourly)", title="") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days"))
+
+plot_cumulative <- ggplot(data, aes(x=datetime, y=cumulative_case)) +
+  geom_line(color="#7570b3", size=1.2) +
+  geom_point(color="#e7298a", size=2) +
+  labs(x="Date and time", y="cum. # of cases", title="") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days"))
+
+# Print and save each plot
+print(plot_total)
+print(plot_cumulative)
+
+# Save the plots in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/total_infection_plot.png", plot = plot_total, width = 12, height = 8, dpi = 300)
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/cumulative_case_plot.png", plot = plot_cumulative, width = 12, height = 8, dpi = 300)
+
+######################################
+
+
+```
+
+
+
+
+# (4) Time series plot of the generated data (a) 
+# Combined Plots a&b
+
+```{r}
+
+###############################
+## This one prints total_infection and cumulative_cases on the same figure
+###############################
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(patchwork)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Generate cumulative cases column
+data <- data %>%
+  mutate(cumulative_case = cumsum(total_infection))
+
+# Save the updated data as CSV
+write.csv(data, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv", row.names = FALSE)
+
+# Plot time series for total infection
+plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
+  geom_line(color="#1b9e77", size=1.2) +
+  geom_point(color="#d95f02", size=2) +
+  labs(y="# of cases (hourly)", title="") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_blank(),   # Remove x-axis text for the first plot
+    axis.ticks.x = element_blank(),  # Remove x-axis ticks for the first plot
+    axis.title.x = element_blank(),  # Remove x-axis title for the first plot
+    axis.title.y = element_text(face = "bold"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days")) +
+  labs(tag = "(a)")
+
+# Plot time series for cumulative cases
+plot_cumulative <- ggplot(data, aes(x=datetime, y=cumulative_case)) +
+  geom_line(color="#7570b3", size=1.2) +
+  geom_point(color="#e7298a", size=2) +
+  labs(x="Date and time", y="cum. # of cases", title="") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90")
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days")) +
+  labs(tag = "(b)")
+
+# Combine the plots into one figure
+combined_plot <- plot_total / plot_cumulative +
+  plot_layout(ncol = 1, heights = c(1, 1)) +
+  plot_annotation(
+    title = "",
+    theme = theme(
+      plot.title = element_text(hjust = 0.5, size = 16, face = "bold")
+    )
+  )
+
+# Print and save the combined plot
+print(combined_plot)
+
+# Save the combined plot in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 12, dpi = 300)
+
+############################
+
+
+```
+
+
+
+
+# (5) Time series plot of the generated data (b)
+# Combined cases & cumulative on same graph
+
+```{r}
+###################   
+## This one print both total_infection and cummulative_cases on the same graph
+##################
+
+
+library(ggplot2)
+library(dplyr)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Calculate cumulative cases
+data <- data %>% 
+  mutate(cumulative_case = cumsum(total_infection))
+
+# Plot the time series for total infection and cumulative case
+ggplot(data, aes(x=datetime)) +
+  geom_line(aes(y=total_infection, color="Total Infection"), size=1.0) +
+  geom_line(aes(y=cumulative_case, color="Cumulative Case"), size=1.0) +
+  labs(x="Date and Time", y="Count", title="Time Series of Total Infection and Cumulative Case") +
+  scale_color_manual(values=c("Total Infection"="orange", "Cumulative Case"="blue")) +
+  theme_minimal()
+
+# Save the plot in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/ts_plot_combined.png", plot = last_plot(), width = 8, height = 6)
+
+
+```
+
+
+
+
+
+# (6) Time series plot of generated data (c) 
+# (similar to plot (a) with diff scale)
+
+```{r}
+########################
+## This one plots only the total_infection
+######################
+
+library(ggplot2)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Plot the time series
+ggplot(data, aes(x=datetime, y=total_infection, color="T Infection")) +
+  geom_line(size=1.0) +
+  labs(x="Date and Time", y="Total Infection", title="Time Series of Total Infection") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  scale_x_datetime(date_breaks = "1 day", date_labels = "%m/%d") +  # Increase x-axis scale
+  guides(color=guide_legend(title=NULL))  # Legend without mentioning color
+
+plot(data)
+
+# Save the plot in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/ts_plot2.png", plot = last_plot(), width = 8, height = 6)
+
+
+
+```
+
+
+
+
+# (7) Time series plot of the generated data (e)
+# Combined cases & cumulative on same graph
+# Stacked Area Charts plot
+
+```{r}
+
+##################################
+
+# Stacked Area Charts
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+library(patchwork)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Plot time series for total infection
+plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
+  geom_line(color="#1b9e77", size=1.2) +
+  geom_point(color="#d95f02", size=2) +
+  labs(y="# of cases (hourly)") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0, face = "bold"),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(face = "bold"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90"),
+    plot.margin = margin(t = 10, r = 10, b = 0, l = 10)
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days")) +
+  labs(tag = "(a)")
+
+# Plot stacked area chart for cumulative cases
+plot_cumulative <- ggplot(data, aes(x=datetime, y=cumulative_case, fill=cumulative_case)) +
+  geom_area(alpha=0.6) +
+  labs(x="Date and time", y="cum. # of cases") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0, face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.title.x = element_text(face = "bold"),
+    axis.title.y = element_text(face = "bold"),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90"),
+    plot.margin = margin(t = 0, r = 10, b = 10, l = 10),
+    legend.position = "none"
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days")) +
+  scale_fill_gradient(low="#7570b3", high="#e7298a") +
+  labs(tag = "(b)")
+
+# Combine the plots into one figure
+combined_plot <- plot_total / plot_cumulative +
+  plot_layout(ncol = 1) +
+  plot_annotation(title = "", theme = theme(plot.title = element_text(hjust = 0.5)))
+
+# Print and save the combined plot
+print(combined_plot)
+
+# Save the combined plot in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 12, dpi = 300)
+
+###########################################
+
+
+```
+
+
+
+
+#8 both plots on same graph
+
+```{r}
+
+#####################################
+
+
+
+# Load necessary libraries
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(scales)
+
+# Load the data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv")
+
+# Convert 'date' and 'hour' to POSIXct format
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
+
+# Plot both total infection and cumulative cases on the same graph
+combined_plot <- ggplot(data) +
+  geom_line(aes(x = datetime, y = total_infection, color = "Total Infections"), size = 1.2) +
+  geom_point(aes(x = datetime, y = total_infection, color = "Total Infections"), size = 2) +
+  geom_area(aes(x = datetime, y = cumulative_case, fill = "Cumulative Cases"), alpha = 0.6, color = NA) +
+  scale_y_continuous(
+    name = "# of cases (hourly)",
+    sec.axis = sec_axis(~., name = "cum. # of cases")
+  ) +
+  scale_color_manual(name = NULL, values = c("Total Infections" = "red")) +
+  scale_fill_manual(name = NULL, values = c("Cumulative Cases" = "#7570b3")) +
+  labs(x = "Date and time", y = "# of cases (hourly)", title = "") +
+  theme_minimal(base_size = 15) +
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+    axis.title.y.left = element_text(face = "bold", color = "red"),
+    axis.title.y.right = element_text(face = "bold", color = "#7570b3"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.major = element_line(color = "gray80"),
+    panel.grid.minor = element_line(color = "gray90"),
+    legend.position = c(0.05, 0.95),  # Positioning legend inside the plot
+    legend.justification = c(0, 1),   # Adjusting the legend position
+    legend.title = element_blank(),
+    legend.text = element_text(size = 12)
+  ) +
+  scale_x_datetime(labels = date_format("%b %d %H:%M"), breaks = date_breaks("2 days"))
+
+# Print and save the combined plot
+print(combined_plot)
+
+# Save the combined plot in the same folder as the data
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 8, dpi = 300)
+
+
+
+
+
+########################################
+
+
+```
+
+
+
+
+
+
+# (9) Simulation  
+
+### Sub-Model
+
+# hourly_data_with_cumulative.csv   # daily_data_full_N1.csv 
+
+```{r}
+
+##############################
+
+# Clear the environment
+rm(list = ls())
+
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(cowplot)
+
+# Read the new CSV file with daily data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+
+# Convert 'date' column to Date format
+data$date <- as.Date(data$date, format = "%m/%d/%Y")
+
+# Get the initial number of confirmed cases
+initial_confirm <- data$confirm[1]
+
+# Define the simulation function
+simulate <- function(epsilon1 = 0.5, zeta = 0.5, Ro = 3.732787, initial_confirm = 1) {
+  N <- 794
+  Sn <- 472
+  En <- 50
+  Pn <- 17
+  An <- 16
+  In <- initial_confirm  # Start with the initial number of confirmed cases
+  R <- N * 0.1
+  C <- 0
+  C0 <- 0
+  P <- 0
+  
+  # Parameters
+  xi <- 0.5
+  alpha <- 0.205
+  epsilon <- 0.1
+  omega <- 0.185
+  thetan <- 1/3
+  sigman <- 0.3
+  kappa <- 0.7
+  tauAn <- 10/30
+  tauIn <- 10/29.6
+  m <- 1/1.5
+  
+  R0 <- Ro
+  dt <- 1.5 #365 / 365
+  
+  result <- numeric(40)
+  
+  for (i in 1:40) {
+    beta <- ifelse(i > 20 & i < 30, 0.75, 0)
+    
+    n1 <- ceiling(((Pn + xi * An + alpha * In) / N) * (R0 * (sigman * tauIn * tauAn)) / ((alpha * kappa * sigman * tauAn) + (tauIn * xi * sigman * (1 - kappa)) + (tauIn * tauAn)) * Sn * dt * (1 - epsilon) * (1 - P / N)^zeta)
+    n3 <- ceiling(omega * R * dt)
+    n6 <- ceiling(thetan * En * dt)
+    n9 <- ceiling(sigman * Pn * dt)
+    n11 <- ceiling(sigman * (1 - kappa) * Pn * dt)
+    n12 <- ceiling(tauAn * An * dt)
+    n15 <- ceiling(sigman * kappa * Pn * dt)
+    n16 <- ceiling(tauIn * In * dt)
+    n19 <- ceiling(m * P * dt)
+    
+    Sn <- Sn - n1 + n3
+    En <- En + n1 - n6
+    Pn <- Pn + n6 - n9
+    An <- An + n11 - n12
+    In <- In + n15 - n16
+    R <- R + n12 + n16 - n3
+    
+    C <- C + n9
+    P <- P + (n12 + n16) * 0.2 - n19
+    C0 <- C0 + n1
+    
+    Sn <- Sn - ceiling(Sn * beta)
+    En <- En - ceiling(En * beta)
+    Pn <- Pn - ceiling(Pn * beta)
+    An <- An - ceiling(An * beta)
+    In <- In - ceiling(In * beta)
+    R <- R - ceiling(R * beta)
+    N <- N - ceiling(N * beta)
+    
+    if (i > 20) epsilon <- epsilon1 / 2
+    if (i > 30) epsilon <- epsilon1
+    
+    result[i] <- C
+  }
+  result
+}
+
+# Define incidence values based on simulations
+incid <- data.frame(
+  value = c(
+    diff(simulate(initial_confirm = initial_confirm)),
+    diff(simulate(0, 100, initial_confirm = initial_confirm)),
+    diff(simulate(0, 1000, initial_confirm = initial_confirm))
+  ),
+  type = rep(
+    c("naive", "IP", "IP+NPI"),
+    each = 39
+  ),
+  date = rep(seq(as.Date("2023-11-20"), length.out = 39, by = "day"), 3)
+)
+
+# Combine data with simulated data
+incid <- rbind(
+  data.frame(value = data$confirm, type = "reported", date = data$date),
+  incid
+)
+
+# Adjust factor levels
+incid$type <- factor(
+  incid$type, 
+  levels = c("reported", "naive", "IP", "IP+NPI")
+)
+
+# Calculate breaks and labels for x-axis
+start_date <- as.Date("2023-11-20")
+end_date <- as.Date("2024-01-01")
+breaks <- seq(start_date, end_date, by = "week")
+labels <- format(breaks, "%b")  # Abbreviated month names
+
+
+
+
+##################################
+# Plotting p.incid
+p.incid <- incid %>%
+  ggplot(aes(x = date, y = value, colour = type)) +
+  geom_line(aes(linetype = type)) +
+  geom_point(aes(shape = type)) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_x_date(breaks = breaks, labels = labels) +  # Automatic breaks and labels
+  scale_color_manual(
+    labels = stringr::str_wrap(
+      c("reported", "naive", "IP", "IP + NPI"), 5
+    ),
+    values = c("black", "#E69F00", "red", "#009E73")  # #999999 #56B4E9
+  ) +
+  scale_linetype_manual(
+    labels = stringr::str_wrap(
+      c("reported", "naive", "IP", "IP + NPI"), 5
+    ),
+    values = c("dotted", "solid", "dashed", "dotted")  #solid
+  ) +
+  scale_shape_manual(
+    labels = stringr::str_wrap(
+      c("reported", "naive", "IP", "IP + NPI"), 5
+    ),
+    values = c(16, 10, 10, 16)
+  ) +
+  labs(
+    x = "time (days)",
+    y = "# of reported cases (daily)",
+    colour = "",
+    linetype = "",
+    shape = ""
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = c(0.8, 0.8),  # Adjust this to position the legend inside the plot
+    legend.background = element_rect(fill = "white", color = "black"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    text = element_text(size = 12),
+    legend.text = element_text(size = 10)
+  ) +
+  guides(shape = guide_legend(override.aes = list(shape = c(16, 10, 10, 16))))
+
+# Print the plot before saving
+print(p.incid)
+
+# Save the plot
+ggsave(
+  filename = "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/p_incid_ss3.png",
+  plot = p.incid,
+  width = 12, height = 6
+)
+
+
+
+##################################
+# Plotting p.incid
+p.incid <- incid %>%
+  ggplot(aes(x = date, y = value, colour = type)) +
+  geom_line(aes(linetype = type), size = 1.0) +  # Thicker lines for better visibility
+  geom_point(aes(shape = type), size = 4) +  # Larger points for better visibility
+  scale_y_log10(breaks = 10^(1:3), labels = scales::comma) +  # Use commas for labels
+  scale_x_date(breaks = breaks, labels = labels) +  # Automatic breaks and labels
+  scale_color_manual(
+    labels = c("Reported", "Naive", "IP", "IP + NPI"),  # Simplified labels
+    values = c("black", "#E69F00", "red", "#009E73")  # Bold colors
+  ) +
+  scale_linetype_manual(
+    labels = c("Reported", "Naive", "IP", "IP + NPI"),  # Simplified labels
+    values = c("dotted", "solid", "solid", "solid")  # c("dotted", "solid", "dashed", "dotted")
+  ) +
+  scale_shape_manual(
+    labels = c("Reported", "Naive", "IP", "IP + NPI"),  # Simplified labels
+    values = c(20, NA, NA, NA)  # #c(16, 17, 18, 19) #16, 10, 10, 16
+  ) +
+  labs(
+    x = "time (days)",
+    y = "# of reported cases (daily)",
+    colour = "",
+    linetype = "",
+    shape = ""
+  ) +
+  theme_minimal(base_size = 15) +  # Increase base font size for better readability
+  theme(
+    legend.position = c(0.8, 0.8),  # Adjust this to position the legend inside the plot
+    legend.background = element_rect(fill = "white", color = "black", size = 0.5, linetype = "solid"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    text = element_text(size = 14),  # Increase text size for better readability
+    legend.text = element_text(size = 12),  # Increase legend text size for better readability
+    panel.grid.major = element_line(color = "grey80", linetype = "dashed"),
+    panel.grid.minor = element_line(color = "grey90", linetype = "dotted"),
+    plot.background = element_rect(fill = "white", color = NA), #aliceblue
+    panel.background = element_rect(fill = "lightgray", color = NA)
+  ) +
+  guides(shape = guide_legend(override.aes = list(size = 4)))  # Increase legend shape size
+
+# Print the plot before saving
+print(p.incid)
+
+# Save the plot
+ggsave(
+  filename = "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/p_incid_ss3.png",
+  plot = p.incid,
+  width = 12, height = 6
+)
+
+
+
+#########################
+
+
+# Plotting p.ratio
+p.ratio <- incid %>%
+  filter(type == "IP+NPI") %>%
+  filter(date %in% data$date) %>%
+  mutate(ratio = data$confirm / value) %>%
+  ggplot(aes(x = date, y = ratio)) +
+  geom_point(size = 3, shape = 21, fill = "blue", color = "darkblue", stroke = 1) +
+  geom_line(linetype = "dashed", color = "blue", size = 1) +
+  coord_cartesian(ylim = c(0, 20)) +
+  labs(y = "Reporting ratio", x = "") +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "gray", linetype = "dotted", size = 0.5),
+    panel.grid.minor = element_line(colour = "gray", linetype = "dotted", size = 0.25),
+    legend.position = "none",
+    axis.text = element_text(color = "darkblue", size = 12),
+    axis.title = element_text(color = "darkblue", size = 14, face = "bold"),
+    plot.title = element_text(color = "darkblue", size = 16, face = "bold", hjust = 0.5),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "lightgray", color = "darkblue", size = 1)
+  ) +
+  ggtitle("")  #Reporting Ratio Over Time
+
+# Print the ratio plot
+print(p.ratio)
+
+# Save the ratio plot as a PNG file
+output_file_ratio <- "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/simul_02/ratio_plot.png"
+ggsave(output_file_ratio, p.ratio, width = 16, height = 8, units = "cm", dpi = 300)
+
+print(paste("Ratio plot saved to", output_file_ratio))
+
+#####################
+
+
+```
+
+
+
+
+
+# (10) Sensitivity 
+
+# hourly_data_with_cumulative.csv   # daily_data_full_N1.csv 
+
+```{r}
+
+
+#####################################
+
+# rm(list=ls())
+
+# library(dplyr)
+
+case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+
+# Create a new column 'incid' with the same values as 'confirm'
+case <- mutate(case, incid = confirm)
+
+# Select only the 'date' and 'incid' columns
+case <- select(case, date, incid)
+
+#### Figure 5:
+library(reshape2)
+library(ggplot2)
+
+# Define the simulation function
+simulate <- function(epsilon1 = 0.5, zeta = 100, Ro = 3.732787, initial_confirm = 1) {
+  N <- 794
+  Sn <- 472
+  En <- 50
+  Pn <- 17
+  An <- 16
+  In <- initial_confirm  # Start with the initial number of confirmed cases
+  R <- N * 0.1
+  C <- 0
+  C0 <- 0
+  D <- 0
+  
+  # Parameters
+  xi <- 0.5
+  alpha <- 0.205
+  epsilon <- 0.1
+  omega <- 0.185
+  thetan <- 1/3
+  sigman <- 0.3
+  kappa <- 0.7
+  tauAn <- 10/30
+  tauIn <- 10/29.6
+  
+  m <- 1/1.5  #0.14
+  
+  R0 <- Ro
+  dt <- 1 #365/ 365
+  
+  result <- numeric(40)
+  
+  for (i in 1:40) {
+    beta <- ifelse(i > 20 & i < 40, 0.75, 0)
+    
+    n1 <- ceiling(((Pn + xi * An + alpha * In) / N) * (R0 * (sigman * tauIn * tauAn)) / ((alpha * kappa * sigman * tauAn) + (tauIn * xi * sigman * (1 - kappa)) + (tauIn * tauAn)) * Sn * dt * (1 - epsilon) * (1 - D / N)^zeta)
+    n3 <- ceiling(omega * R * dt)
+    n6 <- ceiling(thetan * En * dt)
+    n9 <- ceiling(sigman * Pn * dt)
+    n11 <- ceiling(sigman * (1 - kappa) * Pn * dt)
+    n12 <- ceiling(tauAn * An * dt)
+    n15 <- ceiling(sigman * kappa * Pn * dt)
+    n16 <- ceiling(tauIn * In * dt)
+    n19 <- ceiling(m * D * dt)
+    
+    Sn <- Sn - n1 + n3
+    En <- En + n1 - n6
+    Pn <- Pn + n6 - n9
+    An <- An + n11 - n12
+    In <- In + n15 - n16
+    R <- R + n12 + n16 - n3
+    
+    C <- C + n9
+    D <- D + (n12 + n16) * 0.2 - n19
+    C0 <- C0 + n1
+    
+    Sn <- Sn - ceiling(Sn * beta)
+    En <- En - ceiling(En * beta)
+    Pn <- Pn - ceiling(Pn * beta)
+    An <- An - ceiling(An * beta)
+    In <- In - ceiling(In * beta)
+    R <- R - ceiling(R * beta)
+    N <- N - ceiling(N * beta)
+    
+    if (i > 13) epsilon <- epsilon1 / 2
+    if (i > 20) epsilon <- epsilon1
+    
+    result[i] <- C
+  }
+  result
+}
+
+
+epsilons <- sapply(seq(0.3, 2.5, by = 0.5), function(a) {
+  simulate(epsilon1 = a, zeta = 10) %>% diff()
+}) %>% 
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Generate data for different zeta values 100, 2000, by = 400
+zetas <- sapply(seq(10, 500, by = 100), function(k) {
+  simulate(epsilon1 = 0.5, zeta = k) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Plot for epsilons
+p.epsilons <- epsilons %>%
+  ggplot(aes(x = date, y = value, color = variable, linetype = variable)) +
+  geom_line(size = 1) +
+  geom_line(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "grey", inherit.aes = FALSE, linetype = "dashed", size = 1) +
+  geom_point(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "grey", inherit.aes = FALSE, size = 2) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_linetype_manual(values = c(1, 2, 3, 4, 5)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "cyan")) +
+  coord_cartesian(ylim = c(1, 1e2)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", linetype = "dashed", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", linetype = "dotted", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Plot for zetas
+p.zetas <- zetas %>%
+  ggplot(aes(x = date, y = value, color = variable, linetype = variable)) +
+  geom_line(size = 1) +
+  geom_line(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "grey", inherit.aes = FALSE, linetype = "dashed", size = 1) +
+  geom_point(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "grey", inherit.aes = FALSE, size = 2) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_linetype_manual(values = c(1, 2, 3, 4, 5)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "cyan")) +
+  coord_cartesian(ylim = c(1, 1e2)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", linetype = "dashed", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", linetype = "dotted", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Combine the plots
+library(cowplot)
+plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", 
+          labels = c("(a)", "(b)"),
+          label_x = 0.05)
+
+
+#######################################
+
+
+
+```
+
+
+
+
+
+#11
+
+```{r}
+
+# Load necessary libraries
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(cowplot)
+
+# Read the data
+case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+
+# Create a new column 'incid' with the same values as 'confirm'
+case <- mutate(case, incid = confirm)
+
+# Select only the 'date' and 'incid' columns
+case <- select(case, date, incid)
+
+# Define the simulation function
+simulate <- function(epsilon1 = 0.5, zeta = 100, Ro = 3.732787, initial_confirm = 1) {
+  N <- 794
+  Sn <- 472
+  En <- 50
+  Pn <- 17
+  An <- 16
+  In <- initial_confirm
+  R <- N * 0.1
+  C <- 0
+  D <- 0
+  
+  # Parameters
+  xi <- 0.5
+  alpha <- 0.205
+  epsilon <- 0.1
+  omega <- 0.185
+  thetan <- 1/3
+  sigman <- 0.3
+  kappa <- 0.7
+  tauAn <- 10/30
+  tauIn <- 10/29.6
+  m <- 1/1.5
+  R0 <- Ro
+  dt <- 1
+  
+  result <- numeric(40)
+  
+  for (i in 1:40) {
+    beta <- ifelse(i > 20 & i < 40, 0.75, 0)
+    
+    n1 <- ceiling(((Pn + xi * An + alpha * In) / N) * (R0 * (sigman * tauIn * tauAn)) / ((alpha * kappa * sigman * tauAn) + (tauIn * xi * sigman * (1 - kappa)) + (tauIn * tauAn)) * Sn * dt * (1 - epsilon) * (1 - D / N)^zeta)
+    n3 <- ceiling(omega * R * dt)
+    n6 <- ceiling(thetan * En * dt)
+    n9 <- ceiling(sigman * Pn * dt)
+    n11 <- ceiling(sigman * (1 - kappa) * Pn * dt)
+    n12 <- ceiling(tauAn * An * dt)
+    n15 <- ceiling(sigman * kappa * Pn * dt)
+    n16 <- ceiling(tauIn * In * dt)
+    n19 <- ceiling(m * D * dt)
+    
+    Sn <- Sn - n1 + n3
+    En <- En + n1 - n6
+    Pn <- Pn + n6 - n9
+    An <- An + n11 - n12
+    In <- In + n15 - n16
+    R <- R + n12 + n16 - n3
+    
+    C <- C + n9
+    D <- D + (n12 + n16) * 0.2 - n19
+    
+    Sn <- Sn - ceiling(Sn * beta)
+    En <- En - ceiling(En * beta)
+    Pn <- Pn - ceiling(Pn * beta)
+    An <- An - ceiling(An * beta)
+    In <- In - ceiling(In * beta)
+    R <- R - ceiling(R * beta)
+    N <- N - ceiling(N * beta)
+    
+    if (i > 13) epsilon <- epsilon1 / 2
+    if (i > 20) epsilon <- epsilon1
+    
+    result[i] <- C
+  }
+  result
+}
+
+# Sensitivity analysis for different epsilon values
+epsilons <- sapply(seq(0.3, 2.5, by = 0.5), function(a) {
+  simulate(epsilon1 = a, zeta = 10) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Sensitivity analysis for different zeta values
+zetas <- sapply(seq(10, 500, by = 100), function(k) {
+  simulate(epsilon1 = 0.5, zeta = k) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Plot for epsilons
+p.epsilons <- epsilons %>%
+  ggplot(aes(x = date, y = value, color = variable, linetype = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, linetype = "dashed", size = 1.2) +
+  geom_point(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_linetype_manual(values = c(1, 2, 3, 4, 5)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  coord_cartesian(ylim = c(1, 1e2)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", linetype = "dashed", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", linetype = "dotted", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Plot for zetas
+p.zetas <- zetas %>%
+  ggplot(aes(x = date, y = value, color = variable, linetype = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, linetype = "dashed", size = 1.2) +
+  geom_point(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_linetype_manual(values = c(1, 2, 3, 4, 5)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  coord_cartesian(ylim = c(1, 1e2)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", linetype = "dashed", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", linetype = "dotted", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Combine the plots
+plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", labels = c("(a)", "(b)"), label_x = 0.05)
+
+
+```
+
+
+
+
+#13
+```{r}
+
+
+# Load necessary libraries
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(cowplot)
+
+# Read the data
+case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+
+# Create a new column 'incid' with the same values as 'confirm'
+case <- mutate(case, incid = confirm)
+
+# Select only the 'date' and 'incid' columns
+case <- select(case, date, incid)
+
+# Define the simulation function
+simulate <- function(epsilon1 = 0.5, zeta = 100, Ro = 3.732787, initial_confirm = 1) {
+  N <- 794
+  Sn <- 472
+  En <- 50
+  Pn <- 17
+  An <- 16
+  In <- initial_confirm
+  R <- N * 0.1
+  C <- 0
+  D <- 0
+  
+  # Parameters
+  xi <- 0.5
+  alpha <- 0.205
+  epsilon <- 0.1
+  omega <- 0.185
+  thetan <- 1/3
+  sigman <- 0.3
+  kappa <- 0.7
+  tauAn <- 10/30
+  tauIn <- 10/29.6
+  m <- 1/1.5
+  R0 <- Ro
+  dt <- 1
+  
+  result <- numeric(40)
+  
+  for (i in 1:40) {
+    beta <- ifelse(i > 20 & i < 40, 0.75, 0)
+    
+    n1 <- ceiling(((Pn + xi * An + alpha * In) / N) * (R0 * (sigman * tauIn * tauAn)) / ((alpha * kappa * sigman * tauAn) + (tauIn * xi * sigman * (1 - kappa)) + (tauIn * tauAn)) * Sn * dt * (1 - epsilon) * (1 - D / N)^zeta)
+    n3 <- ceiling(omega * R * dt)
+    n6 <- ceiling(thetan * En * dt)
+    n9 <- ceiling(sigman * Pn * dt)
+    n11 <- ceiling(sigman * (1 - kappa) * Pn * dt)
+    n12 <- ceiling(tauAn * An * dt)
+    n15 <- ceiling(sigman * kappa * Pn * dt)
+    n16 <- ceiling(tauIn * In * dt)
+    n19 <- ceiling(m * D * dt)
+    
+    Sn <- Sn - n1 + n3
+    En <- En + n1 - n6
+    Pn <- Pn + n6 - n9
+    An <- An + n11 - n12
+    In <- In + n15 - n16
+    R <- R + n12 + n16 - n3
+    
+    C <- C + n9
+    D <- D + (n12 + n16) * 0.2 - n19
+    
+    Sn <- Sn - ceiling(Sn * beta)
+    En <- En - ceiling(En * beta)
+    Pn <- Pn - ceiling(Pn * beta)
+    An <- An - ceiling(An * beta)
+    In <- In - ceiling(In * beta)
+    R <- R - ceiling(R * beta)
+    N <- N - ceiling(N * beta)
+    
+    if (i > 13) epsilon <- epsilon1 / 2
+    if (i > 20) epsilon <- epsilon1
+    
+    result[i] <- C
+  }
+  result
+}
+
+# Sensitivity analysis for different epsilon values
+epsilons <- sapply(seq(0.3, 2.5, by = 0.5), function(a) {
+  simulate(epsilon1 = a, zeta = 10) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Sensitivity analysis for different zeta values
+zetas <- sapply(seq(10, 500, by = 100), function(k) {
+  simulate(epsilon1 = 0.5, zeta = k) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Plot for epsilons
+p.epsilons <- epsilons %>%
+  ggplot(aes(x = date, y = value, color = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, size = 1.2) +
+  geom_point(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_continuous(breaks = seq(0, 50, by = 10), limits = c(0, 50)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Plot for zetas
+p.zetas <- zetas %>%
+  ggplot(aes(x = date, y = value, color = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, size = 1.2) +
+  geom_point(data = case, aes(y = incid, x = as.Date(date, format = "%Y-%m-%d")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_continuous(breaks = seq(0, 50, by = 10), limits = c(0, 50)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Combine the plots
+combined_plot <- plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", 
+                           labels = c("(a)", "(b)"),
+                           label_x = 0.05)
+
+# Print the combined plot
+print(combined_plot)
+
+# Save the combined plot
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/sensitivity_plots.png", plot = combined_plot, width = 14, height = 7, dpi = 300)
+
+
+
+```
+
+
+
+
+
+#12
+```{r}
+
+
+# Load necessary libraries
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(cowplot)
+
+# Read the case data
+case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+
+# Select only the 'date' and 'confirm' columns
+case <- select(case, date, confirm)
+
+# Define the simulation function
+simulate <- function(epsilon1 = 0.5, zeta = 100, Ro = 3.732787, initial_confirm = 1) {
+  N <- 794
+  Sn <- 472
+  En <- 50
+  Pn <- 17
+  An <- 16
+  In <- initial_confirm
+  R <- N * 0.1
+  C <- 0
+  D <- 0
+  
+  # Parameters
+  xi <- 0.5
+  alpha <- 0.205
+  epsilon <- 0.1
+  omega <- 0.185
+  thetan <- 1/3
+  sigman <- 0.3
+  kappa <- 0.7
+  tauAn <- 10/30
+  tauIn <- 10/29.6
+  m <- 1/1.5
+  R0 <- Ro
+  dt <- 1
+  
+  result <- numeric(40)
+  
+  for (i in 1:40) {
+    beta <- ifelse(i > 20 & i < 40, 0.75, 0)
+    
+    n1 <- ceiling(((Pn + xi * An + alpha * In) / N) * (R0 * (sigman * tauIn * tauAn)) / ((alpha * kappa * sigman * tauAn) + (tauIn * xi * sigman * (1 - kappa)) + (tauIn * tauAn)) * Sn * dt * (1 - epsilon) * (1 - D / N)^zeta)
+    n3 <- ceiling(omega * R * dt)
+    n6 <- ceiling(thetan * En * dt)
+    n9 <- ceiling(sigman * Pn * dt)
+    n11 <- ceiling(sigman * (1 - kappa) * Pn * dt)
+    n12 <- ceiling(tauAn * An * dt)
+    n15 <- ceiling(sigman * kappa * Pn * dt)
+    n16 <- ceiling(tauIn * In * dt)
+    n19 <- ceiling(m * D * dt)
+    
+    Sn <- Sn - n1 + n3
+    En <- En + n1 - n6
+    Pn <- Pn + n6 - n9
+    An <- An + n11 - n12
+    In <- In + n15 - n16
+    R <- R + n12 + n16 - n3
+    
+    C <- C + n9
+    D <- D + (n12 + n16) * 0.2 - n19
+    
+    Sn <- Sn - ceiling(Sn * beta)
+    En <- En - ceiling(En * beta)
+    Pn <- Pn - ceiling(Pn * beta)
+    An <- An - ceiling(An * beta)
+    In <- In - ceiling(In * beta)
+    R <- R - ceiling(R * beta)
+    N <- N - ceiling(N * beta)
+    
+    if (i > 13) epsilon <- epsilon1 / 2
+    if (i > 20) epsilon <- epsilon1
+    
+    result[i] <- C
+  }
+  result
+}
+
+# Sensitivity analysis for different epsilon values
+epsilons <- sapply(seq(0.3, 2.5, by = 0.5), function(a) {
+  simulate(epsilon1 = a, zeta = 10) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Sensitivity analysis for different zeta values
+zetas <- sapply(seq(10, 500, by = 100), function(k) {
+  simulate(epsilon1 = 0.5, zeta = k) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Plot for epsilons
+p.epsilons <- epsilons %>%
+  ggplot(aes(x = date, y = value, color = variable, linetype = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, linetype = "dashed", size = 1.2) +
+  geom_point(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_linetype_manual(values = c(1, 2, 3, 4, 5)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  coord_cartesian(ylim = c(1, 1e2)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", linetype = "dashed", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", linetype = "dotted", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Plot for zetas
+p.zetas <- zetas %>%
+  ggplot(aes(x = date, y = value, color = variable, linetype = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, linetype = "dashed", size = 1.2) +
+  geom_point(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_log10(breaks = 10^(1:3), labels = 10^(1:3)) +
+  scale_linetype_manual(values = c(1, 2, 3, 4, 5)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  coord_cartesian(ylim = c(1, 1e2)) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", linetype = "dashed", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", linetype = "dotted", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Combine the plots
+plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", labels = c("(a)", "(b)"), label_x = 0.05)
+
+
+
+```
+
+
+
+
+#13
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+library(cowplot)
+
+# Read the case data
+case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+
+# Select only the 'date' and 'confirm' columns
+case <- select(case, date, confirm)
+
+# Define the simulation function
+simulate <- function(epsilon1 = 0.5, zeta = 100, Ro = 3.732787, initial_confirm = 1) {
+  N <- 794
+  Sn <- 472
+  En <- 50
+  Pn <- 17
+  An <- 16
+  In <- initial_confirm
+  R <- N * 0.1
+  C <- 0
+  D <- 0
+  
+  # Parameters
+  xi <- 0.5
+  alpha <- 0.205
+  epsilon <- 0.1
+  omega <- 0.185
+  thetan <- 1/3
+  sigman <- 0.3
+  kappa <- 0.7
+  tauAn <- 10/30
+  tauIn <- 10/29.6
+  m <- 1/1.5
+  R0 <- Ro
+  dt <- 1
+  
+  result <- numeric(40)
+  
+  for (i in 1:40) {
+    beta <- ifelse(i > 20 & i < 40, 0.75, 0)
+    
+    n1 <- ceiling(((Pn + xi * An + alpha * In) / N) * (R0 * (sigman * tauIn * tauAn)) / ((alpha * kappa * sigman * tauAn) + (tauIn * xi * sigman * (1 - kappa)) + (tauIn * tauAn)) * Sn * dt * (1 - epsilon) * (1 - D / N)^zeta)
+    n3 <- ceiling(omega * R * dt)
+    n6 <- ceiling(thetan * En * dt)
+    n9 <- ceiling(sigman * Pn * dt)
+    n11 <- ceiling(sigman * (1 - kappa) * Pn * dt)
+    n12 <- ceiling(tauAn * An * dt)
+    n15 <- ceiling(sigman * kappa * Pn * dt)
+    n16 <- ceiling(tauIn * In * dt)
+    n19 <- ceiling(m * D * dt)
+    
+    Sn <- Sn - n1 + n3
+    En <- En + n1 - n6
+    Pn <- Pn + n6 - n9
+    An <- An + n11 - n12
+    In <- In + n15 - n16
+    R <- R + n12 + n16 - n3
+    
+    C <- C + n9
+    D <- D + (n12 + n16) * 0.2 - n19
+    
+    Sn <- Sn - ceiling(Sn * beta)
+    En <- En - ceiling(En * beta)
+    Pn <- Pn - ceiling(Pn * beta)
+    An <- An - ceiling(An * beta)
+    In <- In - ceiling(In * beta)
+    R <- R - ceiling(R * beta)
+    N <- N - ceiling(N * beta)
+    
+    if (i > 13) epsilon <- epsilon1 / 2
+    if (i > 20) epsilon <- epsilon1
+    
+    result[i] <- C
+  }
+  result
+}
+
+# Sensitivity analysis for different epsilon values
+epsilons <- sapply(seq(0.3, 2.5, by = 0.5), function(a) {
+  simulate(epsilon1 = a, zeta = 10) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Sensitivity analysis for different zeta values
+zetas <- sapply(seq(10, 500, by = 100), function(k) {
+  simulate(epsilon1 = 0.5, zeta = k) %>% diff()
+}) %>%
+  as.data.frame() %>%
+  cbind(date = seq(as.Date("2023-11-20"), length.out = 39, by = "day")) %>%
+  melt(id.var = "date")
+
+# Plot for epsilons
+p.epsilons <- epsilons %>%
+  ggplot(aes(x = date, y = value, color = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, linetype = "dotted", size = 1.2) +
+  geom_point(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_continuous(breaks = seq(0, 50, by = 10), limits = c(0, 50)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Plot for zetas
+p.zetas <- zetas %>%
+  ggplot(aes(x = date, y = value, color = variable)) +
+  geom_line(size = 1.5) +
+  geom_line(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, linetype = "dotted", size = 1.2) +
+  geom_point(data = case, aes(y = confirm, x = as.Date(date, format = "%m/%d/%Y")), colour = "darkgrey", inherit.aes = FALSE, size = 3) +
+  scale_y_continuous(breaks = seq(0, 50, by = 10), limits = c(0, 50)) +
+  scale_color_manual(values = c("black", "red", "darkgreen", "blue", "purple")) +
+  theme_minimal() +
+  theme(
+    panel.grid.major = element_line(colour = "lightgrey", size = 0.5),
+    panel.grid.minor = element_line(colour = "lightgrey", size = 0.2),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 14, face = "bold"),
+    legend.position = "none"
+  ) +
+  labs(y = "Daily New Infections", x = "Date", title = "")
+
+# Combine the plots
+combined_plot <- plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", 
+                           labels = c("(a)", "(b)"),
+                           label_x = 0.05)
+
+# Print the combined plot
+print(combined_plot)
+
+# Save the combined plot
+ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/sensitivity_plots.png", plot = combined_plot, width = 14, height = 7, dpi = 300)
+
+```
+
+
+
+
+
+#14
+##### R_eff, 7-day moving average  (sub model)
+
+```{r}
+
+
+############
+###  Data Analysis: R_eff, Average infections, 7-day moving average
+############
+
+
+###############################   3 gigs in one graph
+
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+library(zoo)
+library(patchwork)
+
+# Read the OO data
+data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+
+# Convert date and time columns to appropriate formats
+data$date <- as.Date(data$date, format="%m/%d/%Y")
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%Y-%m-%d %H:%M:%S")
+
+# Hourly Analysis: Average number of infections per hour
+data$hour <- hour(data$datetime)
+hourly_avg <- data %>%
+  group_by(hour) %>%
+  summarise(avg_infections = mean(total_infection))
+
+hourly_avg_plot <- ggplot(hourly_avg, aes(x = hour, y = avg_infections)) +
+  geom_line(color = "green", size = 1.5) +
+  labs(title = "(a) Average infections per hour",
+       x = "Hour of the day",
+       y = "Average infections") +
+  theme_minimal()
+
+# Daily analysis: total infections per day
+daily_total_infections <- data %>%
+  group_by(date) %>%
+  summarise(daily_total = sum(total_infection))
+
+moving_avg_plot <- ggplot(daily_total_infections, aes(x = date, y = daily_total)) +
+  geom_line(color = "brown", size = 1.5) +
+  geom_line(aes(y = rollmean(daily_total, 7, fill = NA)), color = "purple", size = 1.5) +
+  labs(title = "(b) Daily total infections with 7-day moving average",
+       x = "Date",
+       y = "Daily total infections") +
+  theme_minimal()
+
+# Plotting Effective Reproduction Number
+# Serial Interval of OO (ref: https://doi.org/10.3201/eid2606.200357)
+SI.gamma.shape <- 2.25 # (2+2.5/2=2.25)
+SI.gamma.scale <- 3 # (2+4/2=3)
+SI.mean <- SI.gamma.shape * SI.gamma.scale
+
+# Define reporting gap and calculate probabilities
+reporting.gap <- 1 # Assuming hourly gap for this example
+cum.prob.lag.array <- pgamma(q = reporting.gap * c(0:3), shape = SI.gamma.shape, scale = SI.gamma.scale, lower.tail = TRUE)
+prob.lag.array <- diff(cum.prob.lag.array)
+
+# Extract total infections
+case.array <- data$total_infection
+
+# Initialize storage for Reff values
+Reff.record <- NULL
+
+# Calculate the effective reproduction number (Reff)
+for (i in (1 + length(prob.lag.array)):length(case.array)) {
+  temp.prev.case.array <- case.array[(i - length(prob.lag.array)):(i - 1)]
+  temp.post.case <- case.array[i]
+  
+  temp.Reff.array <- NULL
+  for (ii in 1:1000) {
+    curr.prev.case.array <- rpois(n = length(temp.prev.case.array), lambda = temp.prev.case.array)
+    curr.trans.force <- sum(curr.prev.case.array * prob.lag.array) + 1
+    curr.post.case <- rpois(n = length(temp.post.case), lambda = temp.post.case)
+    curr.Reff <- (curr.post.case + 1) / curr.trans.force
+    temp.Reff.array <- c(temp.Reff.array, curr.Reff)
+  }
+  Reff.record <- rbind(Reff.record, c(temp.Reff.array))
+}
+
+Reff.record <- as.data.frame(Reff.record)
+Reff.ci.low.array <- apply(Reff.record, 1, function(x) { quantile(x, probs = 0.025) })
+Reff.ci.up.array <- apply(Reff.record, 1, function(x) { quantile(x, probs = 0.975) })
+Reff.med.array <- apply(Reff.record, 1, function(x) { quantile(x, probs = 0.50) })
+Reff.mean.array <- rowMeans(Reff.record)
+
+# Adjust time array
+time.array <- data$datetime[(length(prob.lag.array) + 1):length(case.array)] - SI.mean / 24
+
+# Effective Reproduction Number plot
+Reff_plot <- ggplot() +
+  geom_hline(yintercept = 1, col = 'red', linetype = 'dashed') +
+  geom_point(aes(x = time.array, y = Reff.med.array), col = 'gray', size = 1) +
+  geom_errorbar(aes(x = time.array, ymin = Reff.ci.low.array, ymax = Reff.ci.up.array), col = 'lightgray') +
+  geom_line(aes(x = time.array, y = smooth(Reff.med.array, kind = '3R')), col = 'black', size = 1.5) +
+  labs(title = "(c) Estimated effective reproduction number",
+       x = "Date and time",
+       y = "R_eff") +
+  scale_y_continuous(breaks = seq(0, 20, by = 5), limits = c(0, 20)) +
+  theme_minimal()
+
+# Combine selected plots
+combined_plot <- (hourly_avg_plot / moving_avg_plot / Reff_plot) + 
+  plot_layout(ncol = 1)
+
+# Print the combined plot
+print(combined_plot)
+
+# Save the combined plot
+ggsave("combined_plots.png", plot = combined_plot, width = 10, height = 15)
+
+
+
+
+
+
+
+```
+
+
+
+
+# (15) Data Fitting 
+
+```{r}
+
+
+
+##########
+# OO model fitting
+##########
+
+##install.packages("deSolve")
+##install.packages("sfsmisc")
+require("deSolve")
+require("sfsmisc")
+
+#################################################
+# this function gets passed to the ODEsolve package salihu
+####################################################
+Lassafunc=function(t,x,vparameters){
+  
+  Sn = x[1]; 
+  En = x[2]; 
+  Pn = x[3]; 
+  An = x[4]; 
+  In = x[5]; 
+  R = x[6]; 
+  P = x[7]; 
+  C1 = x[8]; 
+  t1=x[9];
+  
+ 
+  if (is.na(En) | En < 0) En=0; 
+  if (is.na(Pn) | Pn < 0) Pn=0; 
+  if (is.na(An) | An < 0) An=0; 
+  if (is.na(In) | In < 0) In=0;
+  if (is.na(P) | P < 0) P=0;
+  if (is.na(C1) | C1 < 0) C1=0;
+  if (is.na(t1) | t1 < 0) t1=0;
+  
+  
+  # this is a cross check to ensure that we always have sensical values of I
+  
+  with(as.list(vparameters),{
+    
+    ##### force of infection
+    #lambda=(Pn+xi*An+alpha*In)/(Sn+En+Pn+Pq+An+In+R)
+    #
+    dSn = - ((Pn+xi*An+alpha*In)/(Sn+En+Pn+An+In+R)) * (beta )*Sn-omega*R  #-mu*Sn
+    dEn = beta* ((Pn+xi*An+alpha*In)/(Sn+En+Pn+An+In+R)) *Sn- thetan*En  #-mu*En
+    dPn = thetan*En - sigman*Pn  #-mu*Pn
+    dAn = sigman*(1-kappa) *Pn - tauAn*An  #-mu*An
+    dIn = sigman*kappa*Pn- tauIn*In  #-mu*In
+    dR = tauAn*An +  tauIn*In -omega*R #- mu*R  
+    dP = d*(tauAn*An +  tauIn*In) -m*P
+    if(t1<10)rhon=0.1
+    if(t1>=10 &t1 <23) rhon=0.4
+    if(t1>=23)rhon=0.8
+    dC1  = ( (sigman*(1-kappa) *Pn) + (sigman*kappa*Pn))^(0.358) # thetan*En
+    # dC1  = (thetan*En + sigman*(1-kappa) *Pn + (sigman*kappa*Pn))^(0.58) 
+    # dC1  = #(thetan*En + sigman*(1-kappa) *Pn + sigman*kappa*Pn)^(2)
+    dt1  = 365/365
+    
+    out = c(dSn,dEn,dPn,dAn,dIn,dR,dP,dC1,dt1)
+    list(out)
+  })
+}
+
+
+
+###########################################
+Lassainf = read.table("hourly_cases_02.txt",header=T,sep="")
+#######################################
+
+#variable   
+N= 792;  
+Sn_0 = 472; 
+En_0 = 50; #14; 
+Pn_0 = 17; #8; 
+An_0 = 16; # 5; 
+In_0 = 1; #2; 
+R_0 = 0.1*N; #50; 
+P_0 = 0; 
+C1_0 = 10; 
+t1_0 = 0;
+
+#parameters 
+#epsilon <- 0;
+#lambda1 <- 365/11.2;
+#
+omega <- 0.185;
+thetan <- 1/3;
+thetaq <- 1/3;
+sigman <- 0.03;
+sigmaq <- 0.03;
+kappa <- 0.7; #0.1;
+psi <- 0.7; #0.075;
+tauAn <- 10/30; #0.6;
+#tauAq <- 10/30; #0.53;
+tauIn <- 10/29.6; #0.23;
+#tauIq <- 10/29.6; #0.13;
+rhon <- 0.043;
+#
+#mu <- 0.012;
+#
+d <- 0.2;
+m <- 1/1.5; #0.14;
+
+#the 15 below is the range of the data for daily (356 for hourly)
+vtime = seq(1,356,1)
+
+################################################ para to be estimated
+
+vbeta=numeric(0);
+#vrho=numeric(0);
+#veta=numeric(0);
+#vv=numeric(0);
+vxi=numeric(0);
+valpha=numeric(0);
+
+
+################################################ bfit = bestfit
+
+Sn_bfit=numeric(0);
+En_bfit=numeric(0); 
+Pn_bfit=numeric(0); 
+An_bfit=numeric(0); 
+In_bfit=numeric(0); 
+R_bfit=numeric(0); P_bfit=numeric(0);
+C1_bfit=numeric(0); t1_bfit=numeric(0);
+
+
+vpearsonsq = numeric(0) 
+
+# this will containt the pearson chi squared statistic calculated
+#upperbound =1e17 
+upperbound =1e70 
+# this control the maximum differences between the data and model's outcome
+
+#iiii<-1
+
+niter = 1000 # number of hypotheses we should test
+for (iter in 1:niter)
+{  
+  if (iter %%100==0) cat("Doing iteration ",iter," out of ",niter,"\n")  
+  # inform user the script is doing something
+  
+  ###################################  
+  
+  beta = runif(1,0.245,1.5)  #1.25  # randomly sample rhoH uniformly
+   xi = runif(1,0.01,0.7)
+  alpha = runif(1,0.01,0.91)
+  
+  
+  ####################################
+  vparameters = c(alpha=alpha,xi=xi,beta=beta,
+                  omega=omega,thetan=thetan,thetaq=thetaq,
+                  sigman=sigman,sigmaq=sigmaq,kappa=kappa,psi=psi,
+                  tauAn=tauAn,tauIn=tauIn,
+                  rhon=rhon, d=d, m=m)
+  
+  inits = c(Sn=Sn_0, En=En_0, Pn=Pn_0, 
+            An=An_0, In=In_0, R=R_0, P=P_0,
+            C1=C1_0, t1=t1_0)
+  
+  Lassamodel = as.data.frame(lsoda(inits, vtime, Lassafunc, vparameters)) 
+  
+  # this numerically solves the model
+  ###########################################
+  
+  Sn_pred=Lassamodel$Sn; En_pred=Lassamodel$En; 
+  Pn_pred=Lassamodel$Pn; 
+  An_pred=Lassamodel$An; In_pred=Lassamodel$In; 
+  R_pred=Lassamodel$R; P_pred=Lassamodel$P;
+  C1_pred=Lassamodel$C1; t1_pred=Lassamodel$t1;
+  
+  
+  years=Lassainf[[2]]
+  
+  
+  #y_pred =  In_pred
+  y_pred = C1_pred 
+  
+  ###############################################
+
+  P_chi_sq   = sum(((y_pred)-Lassainf[[2]])^2/(y_pred))
+  #P_chi_sq   = sum(((y_pred)-Lassainf[[2]])/sqrt(y_pred))
+  
+  ################################
+  vbeta  = append(vbeta,vbeta)
+  vxi  = append(vxi,vxi)
+  valpha  = append(valpha,valpha)
+  
+  
+  vpearsonsq = append(vpearsonsq,P_chi_sq)
+  
+  if (P_chi_sq < upperbound){
+    upperbound = P_chi_sq
+    y_bfit = y_pred
+    
+    ##############
+    
+    Sn_bfit=Sn_pred; En_bfit=En_pred;  
+    Pn_bfit=Pn_pred;  An_bfit=An_pred; In_bfit=In_pred; 
+    R_bfit=R_pred; P_bfit=P_pred; C1_bfit=C1_pred; 
+    #png(paste('file',iiii,'.png',sep=""))
+    
+    ########
+    
+    par(mfrow = c(1, 1))
+    
+    # Plot the observed data
+    plot(Lassainf$sno, Lassainf$ccases, xlab = 'time (hourly)', ylab = "cum. # of cases",
+         type = 'p', lwd = 3, pch = 20, col = 'gray', ylim = c(0, 350))
+    
+    # Plot the fitted model
+    lines(Lassainf$sno, y_bfit, col = 'red', lwd = 2)
+    
+    # Calculate a confidence interval for your fitted model (adjust as needed)
+    confidence_interval <- 0.15 * y_bfit  # You can adjust this as needed
+    
+    # Create the upper and lower bounds of the confidence interval
+    upper_bound <- y_bfit + confidence_interval
+    lower_bound <- y_bfit - confidence_interval
+    
+    # Shade the area between the upper and lower bounds
+    polygon(c(Lassainf$sno, rev(Lassainf$sno)), c(upper_bound, rev(lower_bound)),
+            col = rgb(0, 0, 1, alpha = 0.2), border = NA)
+    
+    # Add grid lines
+    grid(col = '#00000044')
+    axis(4, labels = F)
+    
+    # Add text
+    mtext(side = 3, adj = 0, '')
+    
+    # Add a legend
+    legend("topleft", legend = c("reported cases", "fitted model", "95% CI"),
+           col = c('gray', 'red', 'purple', rgb(0, 0, 1, alpha = 0.2)), lwd = c(NA, 2, 2),
+           pch = c(19, NA, NA), bty = "n")
+    
+    # Add a title or other annotations as needed
+    title(main = "")
+    
+    
+    #dev.off()
+    #iiii<-iiii+1
+    
+    
+  }
+}
+
+
+
+print(beta)  #=0.8401927
+print(xi)    #=0.5467295
+print(alpha) #=0.263877
+
+######################
+
+
+
+```
+
+
+
+
+
+
+
+
+
