@@ -6,7 +6,7 @@ This repository contains all the code necessary to reproduce the results in the 
 
 Download the histories.csv file from the following Zenodo repository:
 
-https://zenodo.org/records/11181779
+https://zenodo.org/records/10674401
 
 and place it under data. Then you should be able to run the full-analysis.Rmd notebook from [RStudio Desktop](https://posit.co/download/rstudio-desktop/).
 

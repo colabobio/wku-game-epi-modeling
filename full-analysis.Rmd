@@ -15,7 +15,7 @@ library(dplyr)
 library(tidyr)
 
 # Load the data - Need to retrieve histories.csv from the Zenodo repository:
-# https://zenodo.org/records/11181779
+# https://zenodo.org/records/10674401
 data <- read.csv("./data/histories.csv")
 
 # Filter only 'infection' entries and assign 1 to them
