@@ -1,15 +1,26 @@
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(scales)
-library(patchwork)
-library(cowplot)
-library(reshape2)
+# Mathematical epidemiological analysis of the WKU game data
 
-library(ggplot2)
-library(dplyr)
-library(lubridate)
-library(zoo)
-library(patchwork)
-require("deSolve")
-require("sfsmisc")
+This repository contains all the code necessary to reproduce the results in the paper "The effect of Behavioral Factors and Intervention Strategies on Pathogen Transmission: Insights from a Two-Week Epidemic Game at Wenzhou-Kean University in China", by Musa et al.
+
+## Getting started
+
+Download the histories.csv file from the following Zenodo repository:
+
+https://zenodo.org/records/11181779
+
+and place it under data. Then you should be able to run the full-analysis.Rmd notebook from [RStudio Desktop](https://posit.co/download/rstudio-desktop/).
+
+The code was tested with R software version 4.4.1, and it requires the following packages:
+
+* dplyr
+* tidyr
+* ggplot2
+* reshape2
+* scales
+* patchwork
+* cowplot
+* lubridate
+* zoo
+* patchwork
+* deSolve
+* sfsmisc
