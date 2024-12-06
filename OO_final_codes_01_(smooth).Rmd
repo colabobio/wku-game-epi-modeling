@@ -1,7 +1,9 @@
 
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Analysis of the data from the WKU game"
+author: "Salihu Musa, Trusting Inekwe, Andres Colubri"
+output: html_document
+date: "2024-12-06"
 ---
 
 
@@ -12,8 +14,9 @@ output: html_notebook
 library(dplyr)
 library(tidyr)
 
-# Load the data
-data <- read.csv("./histories.csv")
+# Load the data - Need to retrieve histories.csv from the Zenodo repository:
+# https://zenodo.org/records/11181779
+data <- read.csv("./data/histories.csv")
 
 # Filter only 'infection' entries and assign 1 to them
 data <- data %>%
@@ -33,7 +36,7 @@ result <- data %>%
 print(result)
 
 # Save the result as a CSV file
-write.csv(result, "./hist5.csv", row.names = FALSE)
+write.csv(result, "./data/hist5.csv", row.names = FALSE)
 
 
 ```
@@ -54,7 +57,7 @@ library(tidyr)
 library(ggplot2)
 
 # Load the data
-data <- read.csv("./hourly_data_full.csv")
+data <- read.csv("./data/hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -106,7 +109,7 @@ library(ggplot2)
 library(scales)
 
 # Load the data
-data <- read.csv("./hourly_data_full.csv")
+data <- read.csv("./data/hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -116,7 +119,7 @@ data <- data %>%
   mutate(cumulative_case = cumsum(total_infection))
 
 # Save the updated data as CSV
-write.csv(data, "./hourly_data_with_cumulative.csv", row.names = FALSE)
+write.csv(data, "./data/hourly_data_with_cumulative.csv", row.names = FALSE)
 
 # Plot time series for total infection and cumulative case
 plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
@@ -181,7 +184,7 @@ library(scales)
 library(patchwork)
 
 # Load the data
-data <- read.csv("./hourly_data_full.csv")
+data <- read.csv("./data/hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -191,7 +194,7 @@ data <- data %>%
   mutate(cumulative_case = cumsum(total_infection))
 
 # Save the updated data as CSV
-write.csv(data, "./hourly_data_with_cumulative.csv", row.names = FALSE)
+write.csv(data, "./data/hourly_data_with_cumulative.csv", row.names = FALSE)
 
 # Plot time series for total infection
 plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
@@ -265,7 +268,7 @@ library(ggplot2)
 library(dplyr)
 
 # Load the data
-data <- read.csv("./hourly_data_full.csv")
+data <- read.csv("./data/hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -303,7 +306,7 @@ ggsave("./plots/ts_plot_combined.png", plot = last_plot(), width = 8, height = 6
 library(ggplot2)
 
 # Load the data
-data <- read.csv("./hourly_data_full.csv")
+data <- read.csv("./data/hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -345,7 +348,7 @@ library(scales)
 library(patchwork)
 
 # Load the data
-data <- read.csv("./hourly_data_with_cumulative.csv")
+data <- read.csv("./data/hourly_data_with_cumulative.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -421,7 +424,7 @@ library(ggplot2)
 library(scales)
 
 # Load the data
-data <- read.csv("./hourly_data_with_cumulative.csv")
+data <- read.csv("./data/hourly_data_with_cumulative.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -493,7 +496,7 @@ library(stringr)
 library(cowplot)
 
 # Read the new CSV file with daily data
-data <- read.csv("./daily_data_full_N1_ssm.csv")
+data <- read.csv("./data/daily_data_full_N1_ssm.csv")
 
 # Convert 'date' column to Date format
 data$date <- as.Date(data$date, format = "%m/%d/%Y")
@@ -771,7 +774,7 @@ print(paste("Ratio plot saved to", output_file_ratio))
 
 # library(dplyr)
 
-case <- read.csv("./daily_data_full_N1_ssm.csv")
+case <- read.csv("./data/daily_data_full_N1_ssm.csv")
 
 # Create a new column 'incid' with the same values as 'confirm'
 case <- mutate(case, incid = confirm)
@@ -938,7 +941,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the data
-case <- read.csv("./daily_data_full_N1_ssm.csv")
+case <- read.csv("./data/daily_data_full_N1_ssm.csv")
 
 # Create a new column 'incid' with the same values as 'confirm'
 case <- mutate(case, incid = confirm)
@@ -1089,7 +1092,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the data
-case <- read.csv("./daily_data_full_N1_ssm.csv")
+case <- read.csv("./data/daily_data_full_N1_ssm.csv")
 
 # Create a new column 'incid' with the same values as 'confirm'
 case <- mutate(case, incid = confirm)
@@ -1246,7 +1249,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the case data
-case <- read.csv("./daily_data_full_N1_ssm.csv")
+case <- read.csv("./data/daily_data_full_N1_ssm.csv")
 
 # Select only the 'date' and 'confirm' columns
 case <- select(case, date, confirm)
@@ -1393,7 +1396,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the case data
-case <- read.csv("./daily_data_full_N1_ssm.csv")
+case <- read.csv("./data/daily_data_full_N1_ssm.csv")
 
 # Select only the 'date' and 'confirm' columns
 case <- select(case, date, confirm)
@@ -1555,7 +1558,7 @@ library(zoo)
 library(patchwork)
 
 # Read the OO data
-data <- read.csv("./hourly_data_full.csv")
+data <- read.csv("./data/hourly_data_full.csv")
 
 # Convert date and time columns to appropriate formats
 data$date <- as.Date(data$date, format="%m/%d/%Y")
