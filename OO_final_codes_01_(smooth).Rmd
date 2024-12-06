@@ -13,7 +13,7 @@ library(dplyr)
 library(tidyr)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO data and info/Data--/histories1.CSV")
+data <- read.csv("./histories.csv")
 
 # Filter only 'infection' entries and assign 1 to them
 data <- data %>%
@@ -33,7 +33,7 @@ result <- data %>%
 print(result)
 
 # Save the result as a CSV file
-write.csv(result, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO data and info/Data--/hist5.csv", row.names = FALSE)
+write.csv(result, "./hist5.csv", row.names = FALSE)
 
 
 ```
@@ -54,7 +54,7 @@ library(tidyr)
 library(ggplot2)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+data <- read.csv("./hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -64,7 +64,7 @@ data <- data %>%
   mutate(cumulative_case = cumsum(total_infection))
 
 # Save the updated data as CSV
-write.csv(data, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv", row.names = FALSE)
+write.csv(data, "./hourly_data_with_cumulative.csv", row.names = FALSE)
 
 # Plot time series for total infection and cumulative case
 plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
@@ -82,8 +82,8 @@ print(plot_total)
 print(plot_cumulative)
 
 # Save the plots in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/total_infection_plot.png", plot = plot_total, width = 8, height = 6)
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/cumulative_case_plot.png", plot = plot_cumulative, width = 8, height = 6)
+ggsave("./plots/total_infection_plot.png", plot = plot_total, width = 8, height = 6)
+ggsave("./plots/cumulative_case_plot.png", plot = plot_cumulative, width = 8, height = 6)
 
 ######################################
 
@@ -106,7 +106,7 @@ library(ggplot2)
 library(scales)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+data <- read.csv("./hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -116,7 +116,7 @@ data <- data %>%
   mutate(cumulative_case = cumsum(total_infection))
 
 # Save the updated data as CSV
-write.csv(data, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv", row.names = FALSE)
+write.csv(data, "./hourly_data_with_cumulative.csv", row.names = FALSE)
 
 # Plot time series for total infection and cumulative case
 plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
@@ -154,8 +154,8 @@ print(plot_total)
 print(plot_cumulative)
 
 # Save the plots in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/total_infection_plot.png", plot = plot_total, width = 12, height = 8, dpi = 300)
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/cumulative_case_plot.png", plot = plot_cumulative, width = 12, height = 8, dpi = 300)
+ggsave("./plots/total_infection_plot.png", plot = plot_total, width = 12, height = 8, dpi = 300)
+ggsave("./plots/cumulative_case_plot.png", plot = plot_cumulative, width = 12, height = 8, dpi = 300)
 
 ######################################
 
@@ -181,7 +181,7 @@ library(scales)
 library(patchwork)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+data <- read.csv("./hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -191,7 +191,7 @@ data <- data %>%
   mutate(cumulative_case = cumsum(total_infection))
 
 # Save the updated data as CSV
-write.csv(data, "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv", row.names = FALSE)
+write.csv(data, "./hourly_data_with_cumulative.csv", row.names = FALSE)
 
 # Plot time series for total infection
 plot_total <- ggplot(data, aes(x=datetime, y=total_infection)) +
@@ -242,7 +242,7 @@ combined_plot <- plot_total / plot_cumulative +
 print(combined_plot)
 
 # Save the combined plot in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 12, dpi = 300)
+ggsave("./plots/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 12, dpi = 300)
 
 ############################
 
@@ -265,7 +265,7 @@ library(ggplot2)
 library(dplyr)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+data <- read.csv("./hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -283,7 +283,7 @@ ggplot(data, aes(x=datetime)) +
   theme_minimal()
 
 # Save the plot in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/ts_plot_combined.png", plot = last_plot(), width = 8, height = 6)
+ggsave("./plots/ts_plot_combined.png", plot = last_plot(), width = 8, height = 6)
 
 
 ```
@@ -303,7 +303,7 @@ ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMas
 library(ggplot2)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+data <- read.csv("./hourly_data_full.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -320,7 +320,7 @@ ggplot(data, aes(x=datetime, y=total_infection, color="T Infection")) +
 plot(data)
 
 # Save the plot in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/ts_plot2.png", plot = last_plot(), width = 8, height = 6)
+ggsave("./plots/ts_plot2.png", plot = last_plot(), width = 8, height = 6)
 
 
 
@@ -345,7 +345,7 @@ library(scales)
 library(patchwork)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv")
+data <- read.csv("./hourly_data_with_cumulative.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -396,7 +396,7 @@ combined_plot <- plot_total / plot_cumulative +
 print(combined_plot)
 
 # Save the combined plot in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 12, dpi = 300)
+ggsave("./plots/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 12, dpi = 300)
 
 ###########################################
 
@@ -421,7 +421,7 @@ library(ggplot2)
 library(scales)
 
 # Load the data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_with_cumulative.csv")
+data <- read.csv("./hourly_data_with_cumulative.csv")
 
 # Convert 'date' and 'hour' to POSIXct format
 data$datetime <- as.POSIXct(paste(data$date, data$hour), format="%m/%d/%Y %H:%M:%S")
@@ -457,7 +457,7 @@ combined_plot <- ggplot(data) +
 print(combined_plot)
 
 # Save the combined plot in the same folder as the data
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 8, dpi = 300)
+ggsave("./plots/infection_data_combined_plot.png", plot = combined_plot, width = 12, height = 8, dpi = 300)
 
 
 
@@ -493,7 +493,7 @@ library(stringr)
 library(cowplot)
 
 # Read the new CSV file with daily data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+data <- read.csv("./daily_data_full_N1_ssm.csv")
 
 # Convert 'date' column to Date format
 data$date <- as.Date(data$date, format = "%m/%d/%Y")
@@ -654,7 +654,7 @@ print(p.incid)
 
 # Save the plot
 ggsave(
-  filename = "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/p_incid_ss3.png",
+  filename = "./plots/p_incid_ss3.png",
   plot = p.incid,
   width = 12, height = 6
 )
@@ -707,7 +707,7 @@ print(p.incid)
 
 # Save the plot
 ggsave(
-  filename = "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/p_incid_ss3.png",
+  filename = "./plots/p_incid_ss3.png",
   plot = p.incid,
   width = 12, height = 6
 )
@@ -744,7 +744,7 @@ p.ratio <- incid %>%
 print(p.ratio)
 
 # Save the ratio plot as a PNG file
-output_file_ratio <- "C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/simul_02/ratio_plot.png"
+output_file_ratio <- "./plots/ratio_plot.png"
 ggsave(output_file_ratio, p.ratio, width = 16, height = 8, units = "cm", dpi = 300)
 
 print(paste("Ratio plot saved to", output_file_ratio))
@@ -771,7 +771,7 @@ print(paste("Ratio plot saved to", output_file_ratio))
 
 # library(dplyr)
 
-case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+case <- read.csv("./daily_data_full_N1_ssm.csv")
 
 # Create a new column 'incid' with the same values as 'confirm'
 case <- mutate(case, incid = confirm)
@@ -938,7 +938,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the data
-case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+case <- read.csv("./daily_data_full_N1_ssm.csv")
 
 # Create a new column 'incid' with the same values as 'confirm'
 case <- mutate(case, incid = confirm)
@@ -1089,7 +1089,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the data
-case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+case <- read.csv("./daily_data_full_N1_ssm.csv")
 
 # Create a new column 'incid' with the same values as 'confirm'
 case <- mutate(case, incid = confirm)
@@ -1225,7 +1225,7 @@ combined_plot <- plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h",
 print(combined_plot)
 
 # Save the combined plot
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/sensitivity_plots.png", plot = combined_plot, width = 14, height = 7, dpi = 300)
+ggsave("./plots/sensitivity_plots.png", plot = combined_plot, width = 14, height = 7, dpi = 300)
 
 
 
@@ -1246,7 +1246,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the case data
-case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+case <- read.csv("./daily_data_full_N1_ssm.csv")
 
 # Select only the 'date' and 'confirm' columns
 case <- select(case, date, confirm)
@@ -1393,7 +1393,7 @@ library(ggplot2)
 library(cowplot)
 
 # Read the case data
-case <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/daily_data_full_N1_ssm.csv")
+case <- read.csv("./daily_data_full_N1_ssm.csv")
 
 # Select only the 'date' and 'confirm' columns
 case <- select(case, date, confirm)
@@ -1526,7 +1526,7 @@ combined_plot <- plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h",
 print(combined_plot)
 
 # Save the combined plot
-ggsave("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/sensitivity_plots.png", plot = combined_plot, width = 14, height = 7, dpi = 300)
+ggsave("./plots/sensitivity_plots.png", plot = combined_plot, width = 14, height = 7, dpi = 300)
 
 ```
 
@@ -1555,7 +1555,7 @@ library(zoo)
 library(patchwork)
 
 # Read the OO data
-data <- read.csv("C:/Users/USER/OneDrive - The Hong Kong Polytechnic University/00000_UMass/OO-1st paper/Main_2/simul/hourly_data_full.csv")
+data <- read.csv("./hourly_data_full.csv")
 
 # Convert date and time columns to appropriate formats
 data$date <- as.Date(data$date, format="%m/%d/%Y")
@@ -1649,7 +1649,7 @@ combined_plot <- (hourly_avg_plot / moving_avg_plot / Reff_plot) +
 print(combined_plot)
 
 # Save the combined plot
-ggsave("combined_plots.png", plot = combined_plot, width = 10, height = 15)
+ggsave("./plots/combined_plots.png", plot = combined_plot, width = 10, height = 15)
 
 
 
