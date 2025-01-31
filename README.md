@@ -8,7 +8,7 @@ Download the histories.csv file from the following Zenodo repository:
 
 https://zenodo.org/records/10674401
 
-and place it under data. Then you should be able to run the main-epi-analysis.Rmd notebook from [RStudio Desktop](https://posit.co/download/rstudio-desktop/).
+place it under data, and run the histories-to-data.R script. Then you should be able to run the main-epi-analysis.Rmd notebook from [RStudio Desktop](https://posit.co/download/rstudio-desktop/).
 
 The code was tested with R software version 4.4.1, and it requires the following packages:
 
