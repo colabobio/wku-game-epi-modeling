@@ -3,7 +3,7 @@
 title: "Analysis of the data from the WKU game"
 author: "Salihu Musa, Trusting Inekwe, Andres Colubri"
 output: html_document
-date: "2024-12-06"
+date: "2024-02-12"
 ---
 
 
@@ -1930,6 +1930,271 @@ print(alpha) #=0.263877
 
 
 
+# 16 (additional fig. 4 codes)
+
+```{r}
+
+### Part 1: Hourly Cases (Panel a)
+
+library(ggplot2)
+
+# Read data
+data <- read.csv("./data/hourly_data_full.csv")
+data$date <- as.Date(data$date, format = "%m/%d/%Y")
+data$datetime <- as.POSIXct(paste(data$date, data$hour), format = "%Y-%m-%d %H:%M:%S")
+
+plot_cases <- ggplot(data, aes(x = datetime, y = total_infection)) +
+  geom_bar(stat = "identity", fill = "blue", color = "blue") +
+  labs(
+    title = "(a) Hourly cases",
+    x = "Time",
+    y = "Number of Cases"
+  ) +
+  annotate("text", x = max(data$datetime), y = max(data$total_infection) * 0.8, 
+           label = "Hourly Cases", color = "blue", hjust = 1, vjust = 0, size = 4, fontface = "bold") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    legend.position = "none"
+  )
+
+ggsave("./plots/hourly_cases.png", plot = plot_cases, width = 8, height = 6)
+
+print(plot_cases)
+
+
+
+### Part 2: Reff (Panel b)
+library(ggplot2)
+
+# Parameters
+N <- 794
+Sn <- 780
+En <- 14
+An <- 0
+In <- 0
+R <- 0
+
+# Parameters
+alpha <- 0.0489124
+omega <- 0.2411152
+sigma <- 0.126
+gamma <- 0.129
+tau <- 0.017
+delta <- 0.02
+theta <- 0.018
+m <- 1 / 1.5
+epsilon <- 0.1
+beta <- 0.8366158
+
+#R0
+R0 <- (beta / (theta + gamma)) + (beta * alpha * gamma / ((theta + gamma) * (tau + delta)))
+
+# Time steps
+time <- 0:350
+
+S <- numeric(length(time))
+E <- numeric(length(time))
+A <- numeric(length(time))
+I <- numeric(length(time))
+R_pop <- numeric(length(time))
+Rt <- numeric(length(time))
+
+#initials
+S[1] <- Sn
+E[1] <- En
+A[1] <- An
+I[1] <- In
+R_pop[1] <- R
+
+#simulation
+for (t in 1:(length(time) - 1)) {
+  dS <- -beta * S[t] * (I[t] + epsilon * A[t]) / N
+  dE <- beta * S[t] * (I[t] + epsilon * A[t]) / N - sigma * E[t]
+  dA <- sigma * E[t] - (theta + gamma) * A[t]
+  dI <- theta * A[t] - (tau + delta) * I[t]
+  dR <- gamma * A[t] + tau * I[t]
+  
+  S[t + 1] <- S[t] + dS
+  E[t + 1] <- E[t] + dE
+  A[t + 1] <- A[t] + dA
+  I[t + 1] <- I[t] + dI
+  R_pop[t + 1] <- R_pop[t] + dR
+  
+  Rt[t] <- (beta / (theta + gamma)) * (S[t] / N)
+}
+Rt[length(time)] <- (beta / (theta + gamma)) * (S[length(time)] / N)
+
+# d frame
+model_data <- data.frame(
+  Time = time,
+  Susceptible = S,
+  Exposed = E,
+  Asymptomatic = A,
+  Infected = I,
+  Recovered = R_pop,
+  Rt = Rt
+)
+
+# Plot
+plot_Reff <- ggplot(model_data, aes(x = Time, y = Rt)) +
+  geom_line(aes(color = "Rt"), size = 1.2) +
+  geom_hline(aes(yintercept = 1, color = "Threshold"), linetype = "dashed", size = 1) +
+  scale_color_manual(
+    values = c("Rt" = "purple", "Threshold" = "red"),
+    labels = c(
+      expression(bold(R[eff] ~ ": Effective Reproduction Number")),
+      expression(bold("Threshold (" ~ R[eff] ~ "= 1)"))
+    )
+  ) +
+  labs(
+    title = expression(bold("(b) Effective Reproduction Number, " ~ R[eff])),
+    y = expression(bold(R[eff])),
+    x = expression(bold("Time"))
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(face = "bold"),
+    legend.position = c(0.8, 0.8),
+    legend.background = element_rect(fill = "white", color = "black"),
+    legend.title = element_blank(),
+    legend.text = element_text(face = "bold"),
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold")
+  )
+
+ggsave("./plots/reff.png", plot = plot_Reff, width = 8, height = 6)
+
+print(plot_Reff)
+
+
+
+### Part 3: (Panel c)
+
+# Panel (c): Susceptibility
+plot_S <- ggplot(model_data, aes(x = Time, y = Susceptible)) +
+  geom_line(color = "orange", size = 1.2) +
+  annotate("text", x = max(model_data$Time), y = max(model_data$Susceptible) * 0.8, 
+           label = expression(-Susceptibility~S(t)), color = "orange", hjust = 1, vjust = 0, size = 4, fontface = "bold") +
+  labs(
+    title = "(c) Susceptibility over time",
+    x = "Time",
+    y = expression(S(t))
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    legend.position = "none" 
+  )
+
+ggsave("./plots/susceptibility.png", plot = plot_S, width = 8, height = 6)
+
+print(plot_S)
+
+
+
+
+###  Part 4: R_t (Panel d)
+library(ggplot2)
+
+# Read data
+data <- read.csv("./data/hourly_data_full.csv")
+
+# 
+SI.gamma.shape <- 2.25  # Mean shape 
+SI.gamma.scale <- 3     # Mean scale 
+SI.mean <- SI.gamma.shape * SI.gamma.scale
+
+# reporting gap
+reporting.gap <- 1  
+cum.prob.lag.array <- pgamma(q = reporting.gap * c(0:3), shape = SI.gamma.shape, scale = SI.gamma.scale, lower.tail = TRUE)
+prob.lag.array <- diff(cum.prob.lag.array)
+
+# total infections
+case.array <- data$total_infection
+
+# Initialize storage
+Rt.record <- NULL
+
+# Calculate R_t
+for (i in (1 + length(prob.lag.array)):length(case.array)) {
+  temp.prev.case.array <- case.array[(i - length(prob.lag.array)):(i - 1)]
+  temp.post.case <- case.array[i]
+  
+  temp.Rt.array <- NULL
+  for (ii in 1:1000) {
+    curr.prev.case.array <- rpois(n = length(temp.prev.case.array), lambda = temp.prev.case.array)
+    curr.trans.force <- sum(curr.prev.case.array * prob.lag.array) + 1
+    curr.post.case <- rpois(n = length(temp.post.case), lambda = temp.post.case)
+    curr.Rt <- (curr.post.case + 1) / curr.trans.force
+    temp.Rt.array <- c(temp.Rt.array, curr.Rt)
+  }
+  Rt.record <- rbind(Rt.record, c(temp.Rt.array))
+}
+
+Rt.record <- as.data.frame(Rt.record)
+Rt.ci.low.array <- apply(Rt.record, 1, function(x) { quantile(x, probs = 0.025) })
+Rt.ci.up.array <- apply(Rt.record, 1, function(x) { quantile(x, probs = 0.975) })
+Rt.med.array <- apply(Rt.record, 1, function(x) { quantile(x, probs = 0.50) })
+
+#  time array
+time.array <- data$datetime[(length(prob.lag.array) + 1):length(case.array)] - SI.mean / 24
+
+valid_indices <- !is.na(Rt.med.array)
+time.array <- time.array[valid_indices]
+Rt.med.array <- Rt.med.array[valid_indices]
+Rt.ci.low.array <- Rt.ci.low.array[valid_indices]
+Rt.ci.up.array <- Rt.ci.up.array[valid_indices]
+
+# Plot
+plot_Rt <- ggplot() +
+  geom_hline(aes(yintercept = 1, color = "Threshold (R[t] = 1)"), linetype = "dashed", size = 1) +
+  geom_point(aes(x = time.array, y = Rt.med.array, color = "Median R[t]"), size = 1) +
+  geom_errorbar(aes(x = time.array, ymin = Rt.ci.low.array, ymax = Rt.ci.up.array, color = "95% CI"), alpha = 0.4) +
+  geom_line(aes(x = time.array, y = smooth(Rt.med.array, kind = "3R"), color = "Estimated R[t]"), size = 1.5) +
+  scale_y_continuous(limits = c(0, 12)) +  # Max scale of 12
+  scale_color_manual(
+    values = c(
+      "Median R[t]" = "gray",
+      "95% CI" = "lightgray",
+      "Estimated R[t]" = "purple",
+      "Threshold (R[t] = 1)" = "red"
+    ),
+    breaks = c(
+      "Median R[t]",
+      "95% CI",
+      "Estimated R[t]",
+      "Threshold (R[t] = 1)"
+    ),
+    labels = c(
+      expression(bold("Median " ~ R[t])),
+      expression(bold("95% CI")),
+      expression(bold("Estimated " ~ R[t])),
+      expression(bold("Threshold (" ~ R[t] ~ "= 1)"))
+    )
+  ) +
+  labs(
+    title = expression(bold("(d) Instantaneous Reproduction Number, " ~ R[t])),
+    x = "Time",
+    y = expression(bold(R[t]))
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(face = "bold"),
+    legend.position = c(0.8, 0.8),  # Legend inside the plot
+    legend.background = element_rect(fill = "white", color = "black"),
+    legend.title = element_blank(),  # Removed "Legend" title
+    legend.text = element_text(face = "bold")
+  )
+
+ggsave("./plots/rt.png", plot = plot_Rt, width = 8, height = 6)
+
+# Print
+print(plot_Rt)
+
+```
 
 
 
