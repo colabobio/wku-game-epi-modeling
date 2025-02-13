@@ -409,7 +409,7 @@ ggsave("./plots/infection_data_combined_plot.png", plot = combined_plot, width =
 
 
 
-#8 both plots on same graph
+# (8) both plots on same graph
 
 ```{r}
 
@@ -930,7 +930,7 @@ plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h",
 
 
 
-#11
+# (11)
 
 ```{r}
 
@@ -1081,7 +1081,7 @@ plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", labels = c("(a)", "(b)"), 
 
 
 
-#13
+# (12)
 ```{r}
 
 
@@ -1238,7 +1238,7 @@ ggsave("./plots/sensitivity_plots.png", plot = combined_plot, width = 14, height
 
 
 
-#12
+# (13)
 ```{r}
 
 
@@ -1387,7 +1387,7 @@ plot_grid(p.epsilons, p.zetas, ncol = 2, align = "h", labels = c("(a)", "(b)"), 
 
 
 
-#13
+# (14)
 ```{r}
 # Load necessary libraries
 library(dplyr)
@@ -1534,10 +1534,7 @@ ggsave("./plots/sensitivity_plots.png", plot = combined_plot, width = 14, height
 ```
 
 
-
-
-
-#14
+# (15)
 ##### R_eff, 7-day moving average  (sub model)
 
 ```{r}
@@ -1653,24 +1650,14 @@ print(combined_plot)
 
 # Save the combined plot
 ggsave("./plots/combined_plots.png", plot = combined_plot, width = 10, height = 15)
-
-
-
-
-
-
-
 ```
 
 
 
 
-# (15) Data Fitting 
+# (16) Data Fitting 
 
 ```{r}
-
-
-
 ##########
 # OO model fitting
 ##########
@@ -1735,7 +1722,7 @@ Lassafunc=function(t,x,vparameters){
 
 
 ###########################################
-Lassainf = read.table("hourly_cases_02.txt",header=T,sep="")
+wkuinf = read.table("./data/hourly_cases_02.txt",header=T,sep="")
 #######################################
 
 #variable   
@@ -1841,7 +1828,7 @@ for (iter in 1:niter)
   C1_pred=Lassamodel$C1; t1_pred=Lassamodel$t1;
   
   
-  years=Lassainf[[2]]
+  years=wkuinf[[2]]
   
   
   #y_pred =  In_pred
@@ -1849,8 +1836,8 @@ for (iter in 1:niter)
   
   ###############################################
 
-  P_chi_sq   = sum(((y_pred)-Lassainf[[2]])^2/(y_pred))
-  #P_chi_sq   = sum(((y_pred)-Lassainf[[2]])/sqrt(y_pred))
+  P_chi_sq   = sum(((y_pred)-wkuinf[[2]])^2/(y_pred))
+  #P_chi_sq   = sum(((y_pred)-wkuinf[[2]])/sqrt(y_pred))
   
   ################################
   vbeta  = append(vbeta,vbeta)
@@ -1876,11 +1863,11 @@ for (iter in 1:niter)
     par(mfrow = c(1, 1))
     
     # Plot the observed data
-    plot(Lassainf$sno, Lassainf$ccases, xlab = 'time (hourly)', ylab = "cum. # of cases",
+    plot(wkuinf$sno, wkuinf$ccases, xlab = 'time (hourly)', ylab = "cum. # of cases",
          type = 'p', lwd = 3, pch = 20, col = 'gray', ylim = c(0, 350))
     
     # Plot the fitted model
-    lines(Lassainf$sno, y_bfit, col = 'red', lwd = 2)
+    lines(wkuinf$sno, y_bfit, col = 'red', lwd = 2)
     
     # Calculate a confidence interval for your fitted model (adjust as needed)
     confidence_interval <- 0.15 * y_bfit  # You can adjust this as needed
@@ -1890,7 +1877,7 @@ for (iter in 1:niter)
     lower_bound <- y_bfit - confidence_interval
     
     # Shade the area between the upper and lower bounds
-    polygon(c(Lassainf$sno, rev(Lassainf$sno)), c(upper_bound, rev(lower_bound)),
+    polygon(c(wkuinf$sno, rev(wkuinf$sno)), c(upper_bound, rev(lower_bound)),
             col = rgb(0, 0, 1, alpha = 0.2), border = NA)
     
     # Add grid lines
@@ -1907,30 +1894,22 @@ for (iter in 1:niter)
     
     # Add a title or other annotations as needed
     title(main = "")
-    
-    
+
     #dev.off()
     #iiii<-iiii+1
-    
-    
   }
 }
-
-
 
 print(beta)  #=0.8401927
 print(xi)    #=0.5467295
 print(alpha) #=0.263877
 
 ######################
-
-
-
 ```
 
 
 
-# 16 (additional fig. 4 codes)
+# 17 (additional fig. 4 codes)
 
 ```{r}
 
